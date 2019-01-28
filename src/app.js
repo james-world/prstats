@@ -1,26 +1,40 @@
-import "@babel/polyfill";
-import { getVSS, getGitClient } from './vssHelper';
 import React, { Component, Fragment } from 'react';
-import ReactDOM from 'react-dom';
+import { getVSS, getGitClient } from './vssHelper';
 
-async function start() {
-    VSS = await getVSS();
+class App extends Component {
 
-    var webContext = VSS.getWebContext();
-    var projectId = webContext.project.id;
+    constructor(props) {
+        super(props);
+        this.state = { repos: [] };
+    }
 
-    ReactDOM.render(
-        <h1>Hello { projectId }!!</h1>,
-        document.getElementById('app')
-    );
+    async componentDidMount() {
 
-    var gitClient = await getGitClient();
-    var repos = await gitClient.getRepositories(projectId, true);
+        VSS = await getVSS();
 
-    ReactDOM.render(
-        <h1>Hello { repos[0].name }!!</h1>,
-        document.getElementById('app')
-    );
+        var webContext = VSS.getWebContext();
+        var projectId = webContext.project.id;
+
+        var gitClient = await getGitClient();
+        var repos = await gitClient.getRepositories(projectId, true);
+
+        this.setState({
+            repos: repos
+        });
+    }
+
+    render() {
+        const listItems = this.state.repos.map(repo => <li>{repo.name}</li>);
+
+        return (
+            <div>
+                <h1>Repositories</h1>
+                <ul>
+                    {listItems}
+                </ul>
+            </div>
+        );
+    }
 }
 
-start();
+export default App;
