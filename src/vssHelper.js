@@ -10,7 +10,7 @@ export function getVSS() {
             VSS.init({
                 explicitNotifyLoaded: true,
                 usePlatformScripts: true,
-                usePlatformStyles: false,
+                usePlatformStyles: true,
                 configureModuleLoader: true
             });
             initialised = true;

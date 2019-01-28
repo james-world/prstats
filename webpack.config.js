@@ -20,6 +20,6 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
-        new CopyWebpackPlugin([{ from: 'src/my-hub.html', to: '' }])
+        new CopyWebpackPlugin([{ from: 'src/pr-stats.html', to: '' }])
     ]
 }
