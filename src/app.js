@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { getVSS, getGitClient } from './vssHelper';
+import moment from 'moment';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 
 class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { repos: [] };
+        this.state = { repos: [], prs: [] };
     }
 
     async componentDidMount() {
@@ -16,22 +19,50 @@ class App extends Component {
         var projectId = webContext.project.id;
 
         var gitClient = await getGitClient();
-        var repos = await gitClient.getRepositories(projectId, true);
+
+        var prs = await gitClient.getPullRequestsByProject(projectId, {
+           status: 1,
+           includeLinks: true
+        });
+
+        console.log(prs);
 
         this.setState({
-            repos: repos
+            prs: prs
         });
     }
 
     render() {
-        const listItems = this.state.repos.map(repo => <li>{repo.name}</li>);
+
+        const data = this.state.prs.map(pr => ({
+            link:  pr._links.self.href.replace("_apis/git/repositories", "_git").replace("pullRequests", "pullRequest"),
+            title: pr.title,
+            creationDate: pr.creationDate,
+            createdBy: pr.createdBy.displayName,
+            repo: pr.repository.name
+        }));
+
+        const columns = [{
+            Header: 'Title',
+            id: 'link',
+            accessor: d => ({ link: d.link, title: d.title }),
+            Cell: props => <a href={props.value.link} target="_blank">{props.value.title}</a>
+        }, {
+            Header: 'Age',
+            accessor: 'creationDate',
+            Cell: props => <span>{moment(props.value).fromNow()}</span>
+        }, {
+            Header: 'Created By',
+            accessor: 'createdBy'
+        }, {
+            Header: 'Repo',
+            accessor: 'repo'
+        }];
 
         return (
-            <div>
-                <h1>Repositories</h1>
-                <ul>
-                    {listItems}
-                </ul>
+            <div style={{ marginLeft: "10px", marginRight: "10px" }}>
+                <h3>Active Pull Requests</h3>
+                <ReactTable data={data} columns={columns} />
             </div>
         );
     }

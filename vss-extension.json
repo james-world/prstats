@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "pr-stats-extension",
     "publisher": "dot-net-insight",
-    "version": "1.0.23",
+    "version": "1.0.41",
     "name": "PR Stats Extension",
     "description": "Track PR stats",
     "public": false,
@@ -20,8 +20,8 @@
                 "ms.vss-code-web.code-hub-group"
             ],
             "properties": {
-                "name": "My Hub",
-                "uri": "my-hub.html"
+                "name": "PR Stats",
+                "uri": "pr-stats.html"
             }
         }
     ],
