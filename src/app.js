@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { getVSS, getGitClient } from './vssHelper';
 import moment from 'moment';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 
 class App extends Component {
 
@@ -32,18 +34,35 @@ class App extends Component {
 
     render() {
 
+        const data = this.state.prs.map(pr => ({
+            link:  pr._links.self.href.replace("_apis/git/repositories", "_git").replace("pullRequests", "pullRequest"),
+            title: pr.title,
+            creationDate: pr.creationDate,
+            createdBy: pr.createdBy.displayName,
+            repo: pr.repository.name
+        }));
 
-        const listItems = this.state.prs.map(pr => (
-            <li>
-                <a href={pr._links.self.href.replace("_apis/git/repositories", "_git").replace("pullRequests", "pullRequest")} target="_blank">{pr.title}</a> Created {moment(pr.creationDate).fromNow()}
-            </li>));
+        const columns = [{
+            Header: 'Title',
+            id: 'link',
+            accessor: d => ({ link: d.link, title: d.title }),
+            Cell: props => <a href={props.value.link} target="_blank">{props.value.title}</a>
+        }, {
+            Header: 'Age',
+            accessor: 'creationDate',
+            Cell: props => <span>{moment(props.value).fromNow()}</span>
+        }, {
+            Header: 'Created By',
+            accessor: 'createdBy'
+        }, {
+            Header: 'Repo',
+            accessor: 'repo'
+        }];
 
         return (
-            <div>
-                <h1>Pull Requests</h1>
-                <ul>
-                    {listItems}
-                </ul>
+            <div style={{ marginLeft: "10px", marginRight: "10px" }}>
+                <h3>Active Pull Requests</h3>
+                <ReactTable data={data} columns={columns} />
             </div>
         );
     }
