@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "pr-stats-extension",
     "publisher": "dot-net-insight",
-    "version": "1.0.41",
+    "version": "1.0.42",
     "name": "PR Stats Extension",
     "description": "Track PR stats",
     "public": false,
